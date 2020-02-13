@@ -1,0 +1,71 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PlayerController : MonoBehaviour
+{
+    public float PlayerSpeed = 5.0f;
+    public float RunSpeed = 10.0f;
+    public float RotationSpeed = 500.0f;
+    public float Rotation = 0.0f;
+    public float Gravity = 8.0f;
+
+    Vector3 moveDir;
+
+    CharacterController Controller;
+    Animator PlayerAnimator;
+
+    void Start()
+    {
+        Controller = GetComponent<CharacterController>();
+        PlayerAnimator = GetComponent<Animator>();
+    }
+
+    void Update()
+    {
+        PlayerMovementAndAnimationControl();
+    }
+
+    private void PlayerMovementAndAnimationControl()
+    {
+        moveDir = Vector3.zero;
+
+        if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D)
+            && !Input.GetKeyDown(KeyCode.Mouse0))
+            PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Idle);
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            if (Input.GetKey(KeyCode.LeftShift))
+            {
+                PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Run);
+                moveDir = new Vector3(0, 0, RunSpeed);
+            }
+            else
+            {
+                PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
+                moveDir = new Vector3(0, 0, PlayerSpeed);
+            }    
+            
+            moveDir = transform.TransformDirection(moveDir);            
+        }
+
+        if (Input.GetKeyDown(KeyCode.Mouse0))
+            PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Attack);
+
+
+
+        Rotation += Input.GetAxis("Mouse X") * RotationSpeed * Time.deltaTime;
+
+        transform.eulerAngles = new Vector3(0, Rotation, 0);
+        Controller.Move(moveDir * Time.deltaTime);
+    }
+
+    enum CharacterMovement
+    {
+        Walk = 1,
+        Attack = 2,
+        Run = 3,
+        Idle = 4
+    }
+}
