@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    public float PlayerSpeed = 5.0f;
+    public float PlayerSpeed = 3.0f;
     public float RunSpeed = 10.0f;
     public float RotationSpeed = 500.0f;
     public float Rotation = 0.0f;
@@ -48,6 +48,24 @@ public class PlayerController : MonoBehaviour
             }    
             
             moveDir = transform.TransformDirection(moveDir);            
+        }
+        else if (Input.GetKey(KeyCode.S))
+        {
+            PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
+            moveDir = new Vector3(0, 0, -PlayerSpeed);
+            moveDir = transform.TransformDirection(moveDir);
+        }
+        else if (Input.GetKey(KeyCode.A))
+        {
+            PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
+            moveDir = new Vector3(-PlayerSpeed, 0, 0);
+            moveDir = transform.TransformDirection(moveDir);
+        }
+        else if (Input.GetKey(KeyCode.D))
+        {
+            PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
+            moveDir = new Vector3(PlayerSpeed, 0, 0);
+            moveDir = transform.TransformDirection(moveDir);
         }
 
         if (Input.GetKeyDown(KeyCode.Mouse0))
