@@ -6,9 +6,11 @@ public class PlayerController : MonoBehaviour
 {
     public float PlayerSpeed = 3.0f;
     public float RunSpeed = 10.0f;
+    public float JumpSpeed = 100.0f;
     public float RotationSpeed = 500.0f;
     public float Rotation = 0.0f;
     public float Gravity = 8.0f;
+    public bool isGrounded = true;
 
     Vector3 moveDir;
 
@@ -71,12 +73,21 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0))
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Attack);
 
-
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        {
+            isGrounded = false;
+            moveDir += Vector3.up * JumpSpeed;
+        }
 
         Rotation += Input.GetAxis("Mouse X") * RotationSpeed * Time.deltaTime;
 
         transform.eulerAngles = new Vector3(0, Rotation, 0);
         Controller.Move(moveDir * Time.deltaTime);
+    }
+
+    void OnCollisionStay(Collision collision)
+    {
+        isGrounded = true;
     }
 
     enum CharacterMovement
