@@ -16,4 +16,7 @@ public class Coin : MonoBehaviour
             Count++;
         }
     }
+
+    static public int GetCoinsCount() => Count;
+
 }
