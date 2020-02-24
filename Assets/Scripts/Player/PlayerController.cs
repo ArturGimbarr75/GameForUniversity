@@ -16,11 +16,13 @@ public class PlayerController : MonoBehaviour
 
     CharacterController Controller;
     Animator PlayerAnimator;
+    InputDevice InputDev;
 
     void Start()
     {
         Controller = GetComponent<CharacterController>();
         PlayerAnimator = GetComponent<Animator>();
+        InputDev = InputDevice.GetInstance();
     }
 
     void Update()
@@ -32,13 +34,12 @@ public class PlayerController : MonoBehaviour
     {
         moveDir = Vector3.zero;
 
-        if (!Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.A) && !Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.D)
-            && !Input.GetKeyDown(KeyCode.Mouse0))
+        if (InputDev.IsIdle())
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Idle);
 
-        if (Input.GetKey(KeyCode.W))
+        if (InputDev.IsWalkForward())
         {
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (InputDev.IsRun())
             {
                 PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Run);
                 moveDir = new Vector3(0, 0, RunSpeed);
@@ -51,35 +52,35 @@ public class PlayerController : MonoBehaviour
             
             moveDir = transform.TransformDirection(moveDir);            
         }
-        else if (Input.GetKey(KeyCode.S))
+        else if (InputDev.IsWalkBack())
         {
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
             moveDir = new Vector3(0, 0, -PlayerSpeed);
             moveDir = transform.TransformDirection(moveDir);
         }
-        else if (Input.GetKey(KeyCode.A))
+        else if (InputDev.IsWalkLeft())
         {
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
             moveDir = new Vector3(-PlayerSpeed, 0, 0);
             moveDir = transform.TransformDirection(moveDir);
         }
-        else if (Input.GetKey(KeyCode.D))
+        else if (InputDev.IsWalkRight())
         {
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
             moveDir = new Vector3(PlayerSpeed, 0, 0);
             moveDir = transform.TransformDirection(moveDir);
         }
 
-        if (Input.GetKeyDown(KeyCode.Mouse0))
+        if (InputDev.IsAttak())
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Attack);
 
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+        if (InputDev.IsJump() && isGrounded)
         {
             isGrounded = false;
             moveDir += Vector3.up * JumpSpeed;
         }
 
-        Rotation += Input.GetAxis("Mouse X") * RotationSpeed * Time.deltaTime;
+        Rotation += InputDev.Rotation() * RotationSpeed * Time.deltaTime;
 
         transform.eulerAngles = new Vector3(0, Rotation, 0);
         Controller.Move(moveDir * Time.deltaTime);
