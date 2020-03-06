@@ -52,19 +52,19 @@ public class PlayerController : MonoBehaviour
             
             moveDir = transform.TransformDirection(moveDir);            
         }
-        else if (InputDev.IsWalkBack())
+        if (InputDev.IsWalkBack())
         {
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
             moveDir = new Vector3(0, 0, -PlayerSpeed);
             moveDir = transform.TransformDirection(moveDir);
         }
-        else if (InputDev.IsWalkLeft())
+        if (InputDev.IsWalkLeft())
         {
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
             moveDir = new Vector3(-PlayerSpeed, 0, 0);
             moveDir = transform.TransformDirection(moveDir);
         }
-        else if (InputDev.IsWalkRight())
+        if (InputDev.IsWalkRight())
         {
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Walk);
             moveDir = new Vector3(PlayerSpeed, 0, 0);
@@ -79,16 +79,15 @@ public class PlayerController : MonoBehaviour
             isGrounded = false;
             moveDir += Vector3.up * JumpSpeed;
         }
+        else
+        {
+            moveDir += Vector3.down * Gravity;
+        }
 
         Rotation += InputDev.Rotation() * RotationSpeed * Time.deltaTime;
 
         transform.eulerAngles = new Vector3(0, Rotation, 0);
         Controller.Move(moveDir * Time.deltaTime);
-    }
-
-    void OnCollisionStay(Collision collision)
-    {
-        isGrounded = true;
     }
 
     enum CharacterMovement
