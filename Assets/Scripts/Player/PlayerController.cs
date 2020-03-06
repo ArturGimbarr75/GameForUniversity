@@ -1,16 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     public float PlayerSpeed = 3.0f;
     public float RunSpeed = 10.0f;
-    public float JumpSpeed = 100.0f;
+    public float JumpSpeed = 1000.0f;
     public float RotationSpeed = 500.0f;
     public float Rotation = 0.0f;
-    public float Gravity = 8.0f;
+    public float Gravity = 0.0f;
+    public float TimeBeetweenJump = 0.3f;
+    public float Jumps = 0.0f;
+    public int MaxJumps = 1;
     public bool isGrounded = true;
+
+    public Slider JumpSlider;
+    public Text JumpSliderText;
 
     Vector3 moveDir;
 
@@ -74,9 +81,9 @@ public class PlayerController : MonoBehaviour
         if (InputDev.IsAttak())
             PlayerAnimator.SetInteger("Movement", (int)CharacterMovement.Attack);
 
-        if (InputDev.IsJump() && isGrounded)
+        if (InputDev.IsJump() && Jumps >= 1)
         {
-            isGrounded = false;
+            Jumps--;
             moveDir += Vector3.up * JumpSpeed;
         }
         else
@@ -88,6 +95,26 @@ public class PlayerController : MonoBehaviour
 
         transform.eulerAngles = new Vector3(0, Rotation, 0);
         Controller.Move(moveDir * Time.deltaTime);
+        UpdateJumsInfo();
+    }
+
+    void UpdateJumsInfo()
+    {
+        const int maxSliderValue = 100;
+        // Slider part
+        if (Jumps >= MaxJumps)
+        {
+            Jumps = MaxJumps;
+            JumpSlider.value = maxSliderValue;
+            JumpSliderText.text = string.Format("Jump power: {0}", (int)Jumps);
+
+        }
+        else
+        {
+            Jumps += TimeBeetweenJump * Time.deltaTime;
+            JumpSlider.value = Jumps - (int)Jumps;
+            JumpSliderText.text = string.Format("Jump power: {0}", (int)Jumps);
+        }
     }
 
     enum CharacterMovement
