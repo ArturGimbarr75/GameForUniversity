@@ -17,6 +17,7 @@ public class StartMenuManager : MonoBehaviour
     {
         Ini = new IniFile(IniFilePath);
         SetNickname();
+        Cursor.visible = true;
     }
 
     private void SetNickname()
